@@ -31,7 +31,12 @@ namespace Restaurant
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-
+            services.AddCors(opt=> {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                });
+            });
             services.AddControllers();
         }
 
@@ -48,6 +53,8 @@ namespace Restaurant
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
