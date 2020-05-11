@@ -2,4 +2,6 @@ bin
 obj
 .DS_Store
 appsettings.json
+.suo
+.dtbcache.v2
 *.db

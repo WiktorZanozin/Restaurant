@@ -11,7 +11,7 @@ namespace Persistence
 
         }
         public DbSet<Value> Values { get; set; }
-
+        public DbSet<Pizza> Pizzas { get; set; }
         protected override void OnModelCreating(ModelBuilder buider)
         {
             buider.Entity<Value>()
