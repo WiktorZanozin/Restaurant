@@ -1,57 +1,28 @@
-import React from 'react'
-import { Grid, Container, List } from 'semantic-ui-react'
+import React, { useContext } from 'react'
+import { Grid, Container, List, Segment } from 'semantic-ui-react'
 import { IPizza } from '../../app/modules/pizza'
-import { PizzaItem } from './PizzaItem'
-import { PizzaForm } from './PizzaForm'
+import  PizzaItem  from './PizzaItem'
+import  PizzaForm  from './PizzaForm'
+import { observer } from 'mobx-react-lite'
+import PizzaAdminStore from '../../app/stores/pizzaAdminStore'
 
 
 
-interface IProps{
-    pizzas:IPizza[];
-    selectPizza:(id:string)=>void;
-    selectedPizza:IPizza | null;
-    editMode:boolean;
-    deletePizza:(id:string)=>void;
-    setEditMode: (editMode:boolean)=>void;
-    editPizza: (pizza:IPizza)=>void;
-    createPizza:(pizza:IPizza)=>void;
-    setSelectedPizza: (activity: IPizza | null) => void;
-}
-
-export const PizzaDashboard:React.FC<IProps> = ({
-  pizzas,
-  selectPizza,
-  selectedPizza,
-  editMode,
-  setEditMode,
-  editPizza,
-  createPizza,
-  setSelectedPizza,
-  deletePizza
-}) => {
-    return (
-    <Grid columns={3} divided>
-     <Grid.Row>
-      {pizzas.map((pizza:any)=>
-        <Grid.Column key={pizza.id}>
-          <PizzaItem pizza={pizza} 
-             editMode={editMode}
-             setEditMode={setEditMode}
-             editPizza={editPizza}
-             createPizza={createPizza}
-             selectPizza={selectPizza}
-             deletePizza={deletePizza} />
-        </Grid.Column>
+const PizzaDashboard:React.FC = () => {
+  const pizzaAdminStore=useContext(PizzaAdminStore)
+  const{editMode, selectedPizza, pizzaAdminRegistry}=pizzaAdminStore
+  return(
+  <Grid columns={3} >
+    <Grid.Row>
+      { Array.from(pizzaAdminRegistry.values()).map((pizzaItem: any) => <Grid.Column key={pizzaItem.id}>
+        <Segment>
+           <PizzaItem  pizzaItem={pizzaItem}/>
+          </Segment>
+      </Grid.Column>
       )}
-       {editMode&&
-      <PizzaForm 
-         pizza={selectedPizza} 
-         editPizza={editPizza} 
-         editMode={editMode} 
-         setEditMode={setEditMode}
-         createPizza={createPizza}
-         setSelectedPizza={setSelectedPizza}/>}
-      </Grid.Row>
-    </Grid>
-    )
-}
+      {editMode &&
+        <PizzaForm pizzaItem={selectedPizza} />}
+    </Grid.Row>
+  </Grid>
+  )}
+export default observer(PizzaDashboard)

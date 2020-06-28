@@ -1,16 +1,13 @@
-import React, { useState, ChangeEvent, FormEvent, SyntheticEvent } from 'react'
-import { Modal, Button, Input, Checkbox, List, Form, Image, Dropdown } from 'semantic-ui-react'
+import React, { useState, ChangeEvent, FormEvent, SyntheticEvent, useContext } from 'react'
+import { Modal, Button, Input, Checkbox, List, Form, Image, Dropdown, Select } from 'semantic-ui-react'
 import { IPizza } from '../../app/modules/pizza'
 import { pizzaCategory } from '../../app/modules/pizzaCategory'
+import PizzaAdminStore from '../../app/stores/pizzaAdminStore'
 import {v4 as uuid} from 'uuid'
+import { observer } from 'mobx-react-lite'
 
 interface IProps{
-    pizza:IPizza | null;
-    editMode:boolean;
-    setEditMode: (editMode:boolean)=>void;
-    editPizza: (pizza:IPizza)=>void;
-    createPizza: (pizza: IPizza) => void;
-    setSelectedPizza: (activity: IPizza | null) => void;
+    pizzaItem:IPizza | undefined;
 }
 
 const options = [
@@ -18,7 +15,7 @@ const options = [
     { key: 1, text: 'Ours', value: 1 },
     { key: 2, text: 'Premium', value: 2 },
   ]
-export const PizzaForm :React.FC<IProps>  = ({pizza:initialFormState, editPizza, editMode, setEditMode, createPizza, setSelectedPizza}) => {
+const PizzaForm :React.FC<IProps>  = ({pizzaItem:initialFormState}) => {
     const initializeForm=()=>{
         if(initialFormState){
             return initialFormState
@@ -36,43 +33,58 @@ export const PizzaForm :React.FC<IProps>  = ({pizza:initialFormState, editPizza,
         }
     }  
     //FormEvent <HTMLInputElement | HTMLTextAreaElement | HTMLS> | SyntheticEvent
-    const[pizza, setPizza]= useState<IPizza>(initializeForm)
+    const[pizzaItem, setPizza]= useState<IPizza>(initializeForm)
+    const pizzaAdminStore=useContext(PizzaAdminStore)
+    const{cancelFormOpen, editPizza, createPizza, selectedPizza, editMode}=pizzaAdminStore
     const handleInputChange=(event:any)=>{
     console.log(event.target.value)
      const{name, value}=event.currentTarget
-     setPizza({...pizza, [name]:value});
+     console.log(event.currentTarget)
+     setPizza({...pizzaItem, [name]:value});
     }
 
-    const handleCheckBoxChange=(event:any)=>{
-       // console.log(event.target.value)
-         const{name, value}=event.currentTarget
-         console.log(event.currentTarget)
-         setPizza({...pizza, [name]:value});
-        }
-     
+    const handleCheckBoxChange=(event:React.FormEvent<HTMLInputElement>)=>{
+        // const{name, value}=event.currentTarget
+         //console.log(event.currentTarget.firstChild!.getAttribute("value"))
+         setPizza({...pizzaItem, isAvailable:event.currentTarget.checked});
+    }
+    const handleNumberInput=(event:React.FormEvent<HTMLInputElement>)=>{
+        const{name, value}=event.currentTarget
+        console.log(event.currentTarget)
+        setPizza({...pizzaItem, [name]:parseFloat(value)});
+    }
+
+
+        const handleDropdownListChange=(event: React.SyntheticEvent<HTMLElement>)=>{
+           const item=event.currentTarget.lastChild?.firstChild?.textContent?.toString()
+            setPizza({...pizzaItem, pizzaCategory:options.find((o)=>o.text===item)!.value})
+            console.log(pizzaItem.pizzaCategory)
+           }
+        
     const handleSubmit=()=>{
-        if(pizza.id.length===0){
+        if(pizzaItem.id.length===0){
             let newPizza={
-                ...pizza,
-                id:'guid'
+                ...pizzaItem,
+                id: uuid()
             };
             createPizza(newPizza);
         }
             else{
-                editPizza(pizza);
-                setEditMode(false);
-                setSelectedPizza(null);
+                editPizza(pizzaItem);
             }
         }
-    
+     
+       
     return (
         <Modal
           open={editMode}
           size='small'
-          dimmer
+          dimmer='blurring'
           closeIcon
         >
-        <Modal.Header>{`Edit information about ${pizza.name}`}</Modal.Header>
+        {selectedPizza?
+        (<Modal.Header>{`Edit information about ${pizzaItem.name}`}</Modal.Header>):
+        (<Modal.Header>Create New Pizza</Modal.Header>)}
         <Modal.Content>
         <Form onSubmit={handleSubmit}>
             <Form.Field>
@@ -82,45 +94,46 @@ export const PizzaForm :React.FC<IProps>  = ({pizza:initialFormState, editPizza,
                name='name'
                fluid label='Pizza Name'
                onChange={handleInputChange} 
-               value={pizza.name} />
+               value={pizzaItem.name} />
             <Form.TextArea
                name='description'
                fluid label='Description'
                onChange={handleInputChange}
-                value={pizza.description} />
+                value={pizzaItem.description} />
             <Form.Input 
                name='priceForSmall'
                fluid label='Price for small pizza'
-               onChange={handleInputChange}
-               value={pizza.priceForSmall.valueOf()}/>
+               onChange={handleNumberInput}
+               value={pizzaItem.priceForSmall}/>
             <Form.Input
                name='priceForLarge'
                fluid label='Price for large pizza'
-               onChange={handleInputChange}
-                value={pizza.priceForLarge.valueOf()}/>
+               onChange={handleNumberInput}
+                value={pizzaItem.priceForLarge}/>
             <Form.Input
                name='priceForXXL'
                fluid label='Price for XXL pizza'
-               onChange={handleInputChange}
-               value={pizza.priceForXXL.valueOf()}/>
+               onChange={handleNumberInput}
+               value={pizzaItem.priceForXXL}/>
             <Form.Select
                name='pizzaCategory'
                fluid label='Category'
-               selection
                options={options}
-               onChange={handleInputChange}
-               placeholder={pizzaCategory[pizza.pizzaCategory]}
-               value
+               onChange={handleDropdownListChange}
+               placeholder={pizzaCategory[pizzaItem.pizzaCategory]}
+               value={pizzaItem.pizzaCategory}
                />
             <Form.Checkbox 
                name='isAvailable'
                label='Available' 
                onChange={handleCheckBoxChange}
-               defaultChecked={pizza.isAvailable} 
+               defaultChecked={pizzaItem.isAvailable} 
+               checked={pizzaItem.isAvailable}
                />
 
         <Modal.Actions>
             <Button 
+                onClick={cancelFormOpen}
                 negative
                 content='Cancell'/>
              <Button 
@@ -133,3 +146,5 @@ export const PizzaForm :React.FC<IProps>  = ({pizza:initialFormState, editPizza,
         
     )
 }
+
+export default observer(PizzaForm)

@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Menu, Container, Button } from 'semantic-ui-react'
 import { IPizza } from '../app/modules/pizza'
+import { observer } from 'mobx-react-lite'
+import PizzaAdminStore from '../app/stores/pizzaAdminStore'
 
-interface IProps{
-  openCreateForm:()=>void;
-}
-export const Navbar:React.FC<IProps> = ({openCreateForm}) =>
+
+const Navbar:React.FC = () =>{
+const pizzaAdminStore = useContext(PizzaAdminStore);
+return(
  <Menu fixed='top' inverted>
   <Container>
     <Menu.Item name='editorials'>
@@ -13,7 +15,9 @@ export const Navbar:React.FC<IProps> = ({openCreateForm}) =>
     </Menu.Item>
     <Menu.Item name='Pizza' />
     <Menu.Item>
-      <Button positive content='Create Pizza Item' onClick={openCreateForm} />
+      <Button positive content='Create Pizza Item' onClick={pizzaAdminStore.openCreateForm} />
     </Menu.Item>
   </Container>
 </Menu>
+)}
+export default observer(Navbar)

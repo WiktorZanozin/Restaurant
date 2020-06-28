@@ -37,13 +37,17 @@ namespace Application.Pizzas
 
                 pizza.Name = request.Name ?? pizza.Name;
                 pizza.Description = request.Description ?? pizza.Description;
-                pizza.IsAvailable = request.IsAvailable;
-                pizza.PriceForSmall = request.PriceForSmall;
-                pizza.PriceForLarge = request.PriceForLarge;
-                pizza.PriceForXXL = request.PriceForXXL;
-                pizza.PizzaCategory = request.PizzaCategory;
+                if(request.IsAvailable!=pizza.IsAvailable)
+                    pizza.IsAvailable = request.IsAvailable;
+                if (request.PriceForSmall!=0)
+                    pizza.PriceForSmall = request.PriceForSmall;
+                if (request.PriceForLarge!= 0)
+                    pizza.PriceForLarge = request.PriceForLarge;
+                if (request.PriceForXXL!=0)
+                    pizza.PriceForXXL = request.PriceForXXL;
+                if (request.PizzaCategory!=pizza.PizzaCategory)
+                    pizza.PizzaCategory = request.PizzaCategory;
                 
-                _context.Pizzas.Add(pizza);
                 var success = await _context.SaveChangesAsync() > 0;
                 if (success) return Unit.Value;
 

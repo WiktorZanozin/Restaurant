@@ -1,38 +1,36 @@
-import React from 'react'
-import { Segment, Item, Label, Button } from 'semantic-ui-react'
+import React, { useContext } from 'react'
+import { Item, Label, Button } from 'semantic-ui-react'
 import { IPizza } from '../../app/modules/pizza'
 import { pizzaCategory } from '../../app/modules/pizzaCategory'
-import {  PizzaForm } from './PizzaForm'
+import { observer } from 'mobx-react-lite'
+import PizzaAdminStore from '../../app/stores/pizzaAdminStore'
 
 interface IProps{
-    pizza:IPizza
-    selectPizza:(id:string)=>void;
-    setEditMode: (editMode:boolean)=>void;
-    editPizza: (pizza:IPizza)=>void;
-    editMode:boolean;
-    createPizza:(pizza:IPizza)=>void;
-    deletePizza:(id:string)=>void;
+    pizzaItem:IPizza
 }
 
-
-export const PizzaItem:React.FC<IProps> = ({pizza, editMode, editPizza, setEditMode, createPizza, selectPizza, deletePizza}) => {
+const PizzaItem:React.FC<IProps> = ({pizzaItem}) => {
+  const pizzaAdminStore=useContext(PizzaAdminStore)
+  const{ openEditForm, submitting, deletePizza, target}=pizzaAdminStore
     return (
              <Item>
                <Item.Image src='./assets/placeholder.png' size='small' />
                 <Item.Content>
-                 <Item.Header as='a'>{pizza.name}</Item.Header>
+                 <Item.Header as='a'>{pizzaItem.name}</Item.Header>
                   <Item.Meta>
-                    <span>{pizza.priceForSmall}/{pizza.priceForLarge}/{pizza.priceForXXL}$</span>
+                    <span>{pizzaItem.priceForSmall}/{pizzaItem.priceForLarge}/{pizzaItem.priceForXXL}$</span>
                   </Item.Meta>
-                   <Item.Description>{pizza.description}</Item.Description>
+                   <Item.Description>{pizzaItem.description}</Item.Description>
+                   <Label basic content={pizzaCategory[pizzaItem.pizzaCategory]} />
                  <Item.Extra>
-                 <Label basic content={pizzaCategory[pizza.pizzaCategory]} />
-                 <Button.Group float='right' widths={2}>
-                 <Button  onClick={()=>{deletePizza(pizza.id)}} content='Delete' color='red'/>
-                 <Button  onClick={()=>{setEditMode(true); selectPizza(pizza.id)}} content='View' color='green'/>
+                 <Button.Group float='left' widths={1}>
+                 <Button   loading={target === pizzaItem.id && submitting}
+                  onClick={(e) => deletePizza(e, pizzaItem.id)} content='Delete' color='red'/>
+                 <Button  onClick={()=>openEditForm(pizzaItem!.id)} content='View' color='green'/>
                  </Button.Group>
                </Item.Extra>
              </Item.Content>
            </Item>   
     )
 }
+export default observer(PizzaItem)

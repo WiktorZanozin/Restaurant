@@ -1,65 +1,29 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { Header, Icon, List, Container } from 'semantic-ui-react'
-import axios from 'axios';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
+import { Container } from 'semantic-ui-react'
 import { IPizza } from '../modules/pizza';
-import { Navbar } from '../../features/Navbar';
-import { PizzaDashboard } from '../../features/pizza/PizzaDashboard';
+import  Navbar  from '../../features/Navbar';
+import PizzaDashboard  from '../../features/pizza/PizzaDashboard';
+import agent from '../api/agent'
+import LoadingComponent from './LoadingComponent';
+import PizzaAdminStore from '../stores/pizzaAdminStore'
+import {observer} from 'mobx-react-lite'
 
-interface IState{
-  pizzas:IPizza[]
-}
 
 const App =()=>{
- const [pizzas, setPizzas]=useState<IPizza[]>([]);
- const[selectedPizza, setSelectedPizza]=useState<IPizza | null>(null);
- const[editMode, setEditMode]=useState(false);
- 
- const handleOpenCreateForm = () => {
-  setEditMode(true);
-}
-const handleSelectedPizza=(id:string)=>{
-  setSelectedPizza(pizzas.filter(p=>p.id===id)[0]);
-}
-const handleEditPizza=(pizza:IPizza)=>{
-  setPizzas([...pizzas.filter(p=>p.id!==pizza.id), pizza])
-  setEditMode(false)
-}
-const handleCreatePizza=(pizza:IPizza)=>{
-  setPizzas([...pizzas, pizza])
-  setEditMode(false)
-}
-const handleDeletePizza=(id:string)=>{
-  setPizzas([...pizzas.filter(p => p.id !== id)])
-}
-
+ const pizzaAdminStore= useContext(PizzaAdminStore)
  useEffect(()=>{
-  axios
-   .get<IPizza[]>('https://localhost:44394/api/pizza')
-   .then((response)=>{
-    console.log(response)
-    setPizzas(response.data)
-    })
- },[])
+   pizzaAdminStore.loadPizza()
+ },[pizzaAdminStore])
 
+ if (pizzaAdminStore.loadingInitial) return <LoadingComponent content='Loading...'/>
     return (
       <Fragment>
-        <Navbar openCreateForm={handleOpenCreateForm}/>
+        <Navbar/>
           <Container style={{marginTop: '7em'}}>
-            <PizzaDashboard 
-            pizzas={pizzas}
-            selectPizza={handleSelectedPizza}
-            selectedPizza={selectedPizza}
-            editMode={editMode}
-            setEditMode={setEditMode}
-            editPizza={handleEditPizza}
-            createPizza={handleCreatePizza}
-            deletePizza={handleDeletePizza}
-            setSelectedPizza={setSelectedPizza}
-            />
+            <PizzaDashboard />
           </Container>
      </Fragment>
   );
 }
 
-
-export default App;
+export default observer(App);

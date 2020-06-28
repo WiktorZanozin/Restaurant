@@ -44,9 +44,8 @@ namespace Restaurant.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Unit>> Delete(Guid id, Edit.Command command)
+        public async Task<ActionResult<Unit>> Delete(Guid id)
         {
-            command.Id = id;
             return await _mediator.Send(new Delete.Command { Id = id });
         }
     }

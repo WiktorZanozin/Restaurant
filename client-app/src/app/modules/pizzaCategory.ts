@@ -1,4 +1,4 @@
-export enum pizzaCategory{
+export enum pizzaCategory {
     Classic,
     Ours,
     Premium,
