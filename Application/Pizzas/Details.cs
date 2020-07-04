@@ -1,7 +1,9 @@
-﻿using Domain;
+﻿using Application.Errors;
+using Domain;
 using MediatR;
 using Persistence;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +26,13 @@ namespace Application.Pizzas
             public async Task<Pizza> Handle(Query request, CancellationToken cancellationToken)
             {
                 var pizza = await _context.Pizzas.FindAsync(request.Id);
+
+                if (pizza == null)
+                    throw new RestException(HttpStatusCode.NotFound, new
+                    {
+                        pizza = "Not found"
+                    });
+
                 return pizza;
             }
         }

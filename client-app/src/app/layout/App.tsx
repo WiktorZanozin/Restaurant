@@ -7,6 +7,9 @@ import agent from '../api/agent'
 import LoadingComponent from './LoadingComponent';
 import PizzaAdminStore from '../stores/pizzaAdminStore'
 import {observer} from 'mobx-react-lite'
+import { Route } from 'react-router-dom';
+import HomeAdminPage from '../../features/HomeAdminPage/HomeAdminPage';
+import PizzaForm from '../../features/pizza/PizzaForm';
 
 
 const App =()=>{
@@ -18,10 +21,16 @@ const App =()=>{
  if (pizzaAdminStore.loadingInitial) return <LoadingComponent content='Loading...'/>
     return (
       <Fragment>
-        <Navbar/>
-          <Container style={{marginTop: '7em'}}>
-            <PizzaDashboard />
-          </Container>
+        <Route exact path='/' component={HomeAdminPage}/>
+        <Route path={'/(.+)'} render={()=>(
+          <Fragment>
+           <Navbar/>
+           <Container style={{marginTop: '7em'}}>
+           <Route path='/pizzaAdmin' component={PizzaDashboard}/>
+           <Route path={['/createPizza', '/manage/:id']} component={PizzaForm}/>
+         </Container>
+         </Fragment>
+        )}/>
      </Fragment>
   );
 }

@@ -4,6 +4,7 @@ import { IPizza } from '../../app/modules/pizza'
 import { pizzaCategory } from '../../app/modules/pizzaCategory'
 import { observer } from 'mobx-react-lite'
 import PizzaAdminStore from '../../app/stores/pizzaAdminStore'
+import { Link } from 'react-router-dom'
 
 interface IProps{
     pizzaItem:IPizza
@@ -26,7 +27,11 @@ const PizzaItem:React.FC<IProps> = ({pizzaItem}) => {
                  <Button.Group float='left' widths={1}>
                  <Button   loading={target === pizzaItem.id && submitting}
                   onClick={(e) => deletePizza(e, pizzaItem.id)} content='Delete' color='red'/>
-                 <Button  onClick={()=>openEditForm(pizzaItem!.id)} content='View' color='green'/>
+                 <Button  
+                    as={Link} to={`/manage/${pizzaItem.id}`}
+                   // onClick={()=>openEditForm(pizzaItem!.id)}
+                    content='View'
+                    color='green'/>
                  </Button.Group>
                </Item.Extra>
              </Item.Content>

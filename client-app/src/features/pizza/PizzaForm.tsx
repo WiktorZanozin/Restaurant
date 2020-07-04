@@ -78,7 +78,7 @@ const PizzaForm :React.FC<IProps>  = ({pizzaItem:initialFormState}) => {
     return (
         <Modal
           open={editMode}
-          size='small'
+          size='tiny'
           dimmer='blurring'
           closeIcon
         >
@@ -88,7 +88,7 @@ const PizzaForm :React.FC<IProps>  = ({pizzaItem:initialFormState}) => {
         <Modal.Content>
         <Form onSubmit={handleSubmit}>
             <Form.Field>
-             <Image src='./assets/placeholder.png' size='big' centered/>
+             <Image src='./assets/placeholder.png' size='medium' centered/>
             </Form.Field>
             <Form.Input 
                name='name'
@@ -101,16 +101,19 @@ const PizzaForm :React.FC<IProps>  = ({pizzaItem:initialFormState}) => {
                onChange={handleInputChange}
                 value={pizzaItem.description} />
             <Form.Input 
+               type='number'
                name='priceForSmall'
                fluid label='Price for small pizza'
                onChange={handleNumberInput}
                value={pizzaItem.priceForSmall}/>
             <Form.Input
+               type='number'
                name='priceForLarge'
                fluid label='Price for large pizza'
                onChange={handleNumberInput}
                 value={pizzaItem.priceForLarge}/>
             <Form.Input
+               type='number'
                name='priceForXXL'
                fluid label='Price for XXL pizza'
                onChange={handleNumberInput}

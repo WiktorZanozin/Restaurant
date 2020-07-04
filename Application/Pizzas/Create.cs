@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Enums;
+using FluentValidation;
 using MediatR;
 using Persistence;
 using SQLitePCL;
@@ -25,6 +26,17 @@ namespace Application.Pizzas
             public PizzaCategories PizzaCategory { get; set; }
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Name).NotEmpty();
+                RuleFor(x => x.PriceForSmall).NotNull().NotEmpty();
+                RuleFor(x => x.PriceForLarge).NotNull().NotEmpty();
+                RuleFor(x => x.PriceForXXL).NotNull().NotEmpty();
+                RuleFor(x => x.PizzaCategory).IsInEnum();
+            }
+        }
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;

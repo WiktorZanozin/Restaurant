@@ -1,7 +1,10 @@
-﻿using Domain.Enums;
+﻿using Application.Errors;
+using Domain.Enums;
+using FluentValidation;
 using MediatR;
 using Persistence;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +23,17 @@ namespace Application.Pizzas
             public decimal PriceForXXL { get; set; }
             public PizzaCategories PizzaCategory { get; set; }
         }
-
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Name).NotEmpty();
+                RuleFor(x => x.PriceForSmall).NotNull().NotEmpty();
+                RuleFor(x => x.PriceForLarge).NotNull().NotEmpty();
+                RuleFor(x => x.PriceForXXL).NotNull().NotEmpty();
+                RuleFor(x => x.PizzaCategory).IsInEnum();
+            }
+        }
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
@@ -33,7 +46,10 @@ namespace Application.Pizzas
                 var pizza = await _context.Pizzas.FindAsync(request.Id);
 
                 if (pizza == null)
-                    throw new Exception("Could not find this pizza");
+                    throw new RestException(HttpStatusCode.NotFound, new
+                    {
+                        pizza = "Not found"
+                    });
 
                 pizza.Name = request.Name ?? pizza.Name;
                 pizza.Description = request.Description ?? pizza.Description;

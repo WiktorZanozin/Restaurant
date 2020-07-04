@@ -1,6 +1,9 @@
-﻿using MediatR;
+﻿using Application.Errors;
+using Domain;
+using MediatR;
 using Persistence;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +26,10 @@ namespace Application.Pizzas
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 var pizza = await _context.Pizzas.FindAsync(request.Id);
+
+                if (pizza == null)
+                    throw new RestException(HttpStatusCode.NotFound, new {pizza="Not found"
+                  });
 
                 _context.Remove(pizza);
                 var success = await _context.SaveChangesAsync() > 0;
