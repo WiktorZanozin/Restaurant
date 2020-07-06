@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent, SyntheticEvent, useContext } from 'react'
-import { Modal, Button, Input, Checkbox, List, Form, Image, Dropdown, Select } from 'semantic-ui-react'
+import { Modal, Button, Checkbox, List, Form, Image, Dropdown, Select } from 'semantic-ui-react'
 import { IPizza } from '../../app/modules/pizza'
 import { pizzaCategory } from '../../app/modules/pizzaCategory'
 import PizzaAdminStore from '../../app/stores/pizzaAdminStore'
