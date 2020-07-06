@@ -2,6 +2,12 @@ import axios, { AxiosResponse, AxiosPromise } from 'axios';
 import { IPizza } from '../modules/pizza';
 
 axios.defaults.baseURL='https://localhost:44394/api';
+
+axios.interceptors.response.use(undefined, error=>{
+    if(error.response.status===404){
+        throw error.response;
+    }
+})
 const responseBody=(response:AxiosResponse)=> response.data;
 
 const sleep=(ms:number)=>(response:AxiosResponse)=>

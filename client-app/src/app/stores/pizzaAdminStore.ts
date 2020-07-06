@@ -30,6 +30,7 @@ class PizzaAdminStore{
         runInAction('load activities error', () => {
           this.loadingInitial = false;
         })
+        throw error;
       }
     }
 

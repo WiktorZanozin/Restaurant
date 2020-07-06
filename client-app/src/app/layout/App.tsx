@@ -7,9 +7,10 @@ import agent from '../api/agent'
 import LoadingComponent from './LoadingComponent';
 import PizzaAdminStore from '../stores/pizzaAdminStore'
 import {observer} from 'mobx-react-lite'
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import HomeAdminPage from '../../features/HomeAdminPage/HomeAdminPage';
 import PizzaForm from '../../features/pizza/PizzaForm';
+import NotFound from './NotFound';
 
 
 const App =()=>{
@@ -26,9 +27,12 @@ const App =()=>{
           <Fragment>
            <Navbar/>
            <Container style={{marginTop: '7em'}}>
-           <Route path='/pizzaAdmin' component={PizzaDashboard}/>
-           <Route path={['/createPizza', '/manage/:id']} component={PizzaForm}/>
-         </Container>
+             <Switch>
+               <Route path='/pizzaAdmin' component={PizzaDashboard}/>
+               <Route path={['/createPizza', '/manage/:id']} component={PizzaForm}/>
+                <Route component={NotFound}/>
+             </Switch>
+           </Container>
          </Fragment>
         )}/>
      </Fragment>
