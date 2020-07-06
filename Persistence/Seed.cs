@@ -1,18 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain;
 using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static void SeedData(DataContext context)
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
         {
-            if (!context.Pizzas.Any())
+            string[] roleNames = { "Admin", "Customer" };
+
+            foreach (string role in roleNames)
             {
-                var pizzas = new List<Pizza>
+                var roleStore = new RoleStore<IdentityRole>(context);
+
+                if (!context.Roles.Any(r => r.Name == role))
+                {
+                    await roleStore.CreateAsync(new IdentityRole(role));
+                }
+            }
+            if (!userManager.Users.Any())
+            {
+                var admin = new AppUser
+                {
+                    DisplayName = "Admin",
+                    UserName = "admin",
+                    Email = "admin@gmail.com"
+                };
+                IdentityResult adminResult = await userManager.CreateAsync(admin, "Pa$$w0rd");
+
+                if (adminResult.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
+                }
+
+                var customer = new AppUser
+                {
+                    DisplayName = "Admin",
+                    UserName = "admin",
+                    Email = "admin@gmail.com"
+                };
+                IdentityResult customerResult = await userManager.CreateAsync(customer, "Pa$$w0rd");
+
+                if (customerResult.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(customer, "Customer");
+                }
+
+            }
+
+                if (!context.Pizzas.Any())
+                {
+                    var pizzas = new List<Pizza>
                 {
                     new Pizza
                     {
@@ -46,9 +90,9 @@ namespace Persistence
                     }
                 };
 
-                context.Pizzas.AddRange(pizzas);
-                context.SaveChanges();
+                    context.Pizzas.AddRange(pizzas);
+                    context.SaveChanges();
+                }
             }
         }
     }
-}

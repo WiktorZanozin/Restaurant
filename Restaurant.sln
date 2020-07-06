@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant", "Restaurant\Restaurant.csproj", "{380853A7-2097-4474-AEA4-D81D0A57AE1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restaurant", "Restaurant\Restaurant.csproj", "{380853A7-2097-4474-AEA4-D81D0A57AE1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{828E23FA-D406-42F7-8397-A70ECD344439}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{828E23FA-D406-42F7-8397-A70ECD344439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{0C900655-927F-44ED-B93C-AA3F12051993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{0C900655-927F-44ED-B93C-AA3F12051993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{552340DF-2847-4060-B690-7F21BE327F35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{552340DF-2847-4060-B690-7F21BE327F35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{67DA28EA-84D4-4D6D-9AC3-2031CF1E8A77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{552340DF-2847-4060-B690-7F21BE327F35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{552340DF-2847-4060-B690-7F21BE327F35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{552340DF-2847-4060-B690-7F21BE327F35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67DA28EA-84D4-4D6D-9AC3-2031CF1E8A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67DA28EA-84D4-4D6D-9AC3-2031CF1E8A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67DA28EA-84D4-4D6D-9AC3-2031CF1E8A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67DA28EA-84D4-4D6D-9AC3-2031CF1E8A77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,15 +1,24 @@
+using Application.Interfaces;
 using Application.Pizzas;
+using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Restaurant.Middlewares;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Restaurant
 {
@@ -29,7 +38,8 @@ namespace Restaurant
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddCors(opt=> {
+            services.AddCors(opt =>
+            {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
@@ -37,7 +47,29 @@ namespace Restaurant
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddControllers()
-                .AddFluentValidation(cfg=>cfg.RegisterValidatorsFromAssemblyContaining<Create>());
+                .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>());
+            services.TryAddSingleton<ISystemClock, SystemClock>();
+
+            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<DataContext>()
+                 .AddDefaultTokenProviders();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key"));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+             .AddJwtBearer(opt =>
+             {
+                 opt.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = key,
+                     ValidateAudience = false,
+                     ValidateIssuer = false,
+                 };
+             });
+                  //var builder = services.AddIdentitCore<AppUser>();
+                  //var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+                  //identityBuilder.AddEntityFrameworkStores<DataContext>();
+                  ////identityBuilder.AddRoleManager<RoleManager<UserRoles>>();
+                  //identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+                  services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +84,8 @@ namespace Restaurant
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
